@@ -315,11 +315,18 @@ public class XMPurchaseOrder implements XMRecord{
         
         switch(fnCol){
             case 3:
+                //check first if project code is already selected
+                if (poData.getBranchCd().isEmpty()){
+                    psMessage = "Please select a PROJECT first.";
+                    return null;
+                }
+                
                 lsHeader = "Brand»Description»Unit»Model»Inv. Type»Barcode»Stock ID";
                 lsColName = "xBrandNme»sDescript»sMeasurNm»xModelNme»xInvTypNm»sBarCodex»sStockIDx";
                 lsColCrit = "b.sDescript»a.sDescript»f.sMeasurNm»c.sDescript»d.sDescript»a.sBarCodex»a.sStockIDx";
                 
-                lsSQL = MiscUtil.addCondition(getSQ_Stocks(), "a.cRecdStat = " + SQLUtil.toSQL(RecordStatus.ACTIVE));
+                lsSQL = MiscUtil.addCondition(getSQ_Stocks(), "a.cRecdStat = " + SQLUtil.toSQL(RecordStatus.ACTIVE) + 
+                            " AND e.sBranchCd = " + SQLUtil.toSQL(poData.getBranchCd()));
                 
                 if (fbByCode){
                     lsSQL = MiscUtil.addCondition(lsSQL, "a.sStockIDx = " + SQLUtil.toSQL(fsValue));
@@ -345,6 +352,8 @@ public class XMPurchaseOrder implements XMRecord{
                 } else{
                     setDetail(fnRow, fnCol, "");
                     setDetail(fnRow, "nUnitPrce", 0.00);
+                    
+                    psMessage = "No record was selected.";
                     return null;
                 }
             default:
@@ -629,8 +638,7 @@ public class XMPurchaseOrder implements XMRecord{
                         " LEFT JOIN Measure f" +
                             " ON a.sMeasurID = f.sMeasurID" +
                     ", Inv_Master e" + 
-                " WHERE a.sStockIDx = e.sStockIDx" + 
-                    " AND e.sBranchCd = " + SQLUtil.toSQL(psBranchCd);
+                " WHERE a.sStockIDx = e.sStockIDx";
     }
     
     public boolean addDetail(){return poControl.addDetail();}
