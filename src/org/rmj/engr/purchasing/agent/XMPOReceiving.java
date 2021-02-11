@@ -25,7 +25,7 @@ import org.rmj.appdriver.MiscUtil;
 import org.rmj.appdriver.SQLUtil;
 import org.rmj.appdriver.agentfx.ui.showFXDialog;
 import org.rmj.cas.client.base.XMClient;
-import org.rmj.cas.inventory.base.Inventory;
+import org.rmj.engr.inventory.base.Inventory;
 import org.rmj.cas.parameter.agent.XMBranch;
 import org.rmj.cas.parameter.agent.XMDepartment;
 import org.rmj.cas.parameter.agent.XMInventoryType;

@@ -26,7 +26,7 @@ import org.rmj.appdriver.iface.XMRecord;
 import org.rmj.appdriver.agentfx.ui.showFXDialog;
 import org.rmj.appdriver.constants.RecordStatus;
 import org.rmj.cas.client.base.XMClient;
-import org.rmj.cas.inventory.base.Inventory;
+import org.rmj.engr.inventory.base.Inventory;
 import org.rmj.cas.parameter.agent.XMBranch;
 import org.rmj.cas.parameter.agent.XMDepartment;
 import org.rmj.cas.parameter.agent.XMInventoryType;
