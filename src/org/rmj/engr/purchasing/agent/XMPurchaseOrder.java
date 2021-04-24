@@ -23,17 +23,17 @@ import org.rmj.appdriver.SQLUtil;
 import org.rmj.appdriver.iface.XMRecord;
 import org.rmj.appdriver.agentfx.ui.showFXDialog;
 import org.rmj.appdriver.constants.RecordStatus;
-import org.rmj.cas.client.base.XMClient;
+import org.rmj.engr.client.base.XMClient;
 import org.rmj.engr.inventory.base.Inventory;
-import org.rmj.cas.parameter.agent.XMBranch;
-import org.rmj.cas.parameter.agent.XMInventoryType;
-import org.rmj.cas.parameter.agent.XMSupplier;
-import org.rmj.cas.parameter.agent.XMTerm;
+import org.rmj.engr.parameter.agent.XMBranch;
+import org.rmj.engr.parameter.agent.XMInventoryType;
+import org.rmj.engr.parameter.agent.XMSupplier;
+import org.rmj.engr.parameter.agent.XMTerm;
 import org.rmj.engr.purchasing.base.PurchaseOrder;
 import org.engr.purchasing.pojo.UnitPODetail;
 import org.engr.purchasing.pojo.UnitPOMaster;
 import org.rmj.appdriver.agentfx.callback.IMasterDetail;
-import org.rmj.cas.parameter.agent.XMProject;
+import org.rmj.engr.parameter.agent.XMProject;
 
 public class XMPurchaseOrder implements XMRecord{
     public XMPurchaseOrder(GRider foGRider, String fsBranchCD, boolean fbWithParent){
@@ -377,7 +377,7 @@ public class XMPurchaseOrder implements XMRecord{
                                                     lsHeader, 
                                                     lsColName, 
                                                     lsColCrit, 
-                                                    fbByCode ? 0 : 1);
+                                                    fbByCode ? 3 : 1);
         
         if(loJSON == null)
             return false;

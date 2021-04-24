@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,17 +24,17 @@ import org.rmj.appdriver.SQLUtil;
 import org.rmj.appdriver.iface.XMRecord;
 import org.rmj.appdriver.agentfx.ui.showFXDialog;
 import org.rmj.appdriver.constants.RecordStatus;
-import org.rmj.cas.client.base.XMClient;
+import org.rmj.engr.client.base.XMClient;
 import org.rmj.engr.inventory.base.Inventory;
-import org.rmj.cas.parameter.agent.XMBranch;
-import org.rmj.cas.parameter.agent.XMDepartment;
-import org.rmj.cas.parameter.agent.XMInventoryType;
-import org.rmj.cas.parameter.agent.XMSupplier;
+import org.rmj.engr.parameter.agent.XMBranch;
+import org.rmj.engr.parameter.agent.XMDepartment;
+import org.rmj.engr.parameter.agent.XMInventoryType;
+import org.rmj.engr.parameter.agent.XMSupplier;
 import org.rmj.engr.purchasing.base.POReturn;
 import org.engr.purchasing.pojo.UnitPOReturnDetail;
 import org.engr.purchasing.pojo.UnitPOReturnMaster;
 import org.rmj.appdriver.agentfx.callback.IMasterDetail;
-import org.rmj.cas.parameter.agent.XMProject;
+import org.rmj.engr.parameter.agent.XMProject;
 
 public class XMPOReturn implements XMRecord{
     public XMPOReturn(GRider foGRider, String fsBranchCD, boolean fbWithParent){

@@ -24,19 +24,19 @@ import org.rmj.appdriver.iface.XMRecord;
 import org.rmj.appdriver.MiscUtil;
 import org.rmj.appdriver.SQLUtil;
 import org.rmj.appdriver.agentfx.ui.showFXDialog;
-import org.rmj.cas.client.base.XMClient;
 import org.rmj.engr.inventory.base.Inventory;
-import org.rmj.cas.parameter.agent.XMBranch;
-import org.rmj.cas.parameter.agent.XMDepartment;
-import org.rmj.cas.parameter.agent.XMInventoryType;
-import org.rmj.cas.parameter.agent.XMSupplier;
-import org.rmj.cas.parameter.agent.XMTerm;
+import org.rmj.engr.parameter.agent.XMBranch;
+import org.rmj.engr.parameter.agent.XMDepartment;
+import org.rmj.engr.parameter.agent.XMInventoryType;
+import org.rmj.engr.parameter.agent.XMSupplier;
+import org.rmj.engr.parameter.agent.XMTerm;
 import org.rmj.engr.purchasing.base.POReceiving;
 import org.engr.purchasing.pojo.UnitPOReceivingDetail;
 import org.engr.purchasing.pojo.UnitPOReceivingMaster;
 import org.rmj.appdriver.agentfx.callback.IMasterDetail;
 import org.rmj.appdriver.constants.TransactionStatus;
-import org.rmj.cas.parameter.agent.XMProject;
+import org.rmj.engr.parameter.agent.XMProject;
+import org.rmj.engr.client.base.XMClient;
 
 public class XMPOReceiving implements XMRecord{
     public XMPOReceiving(GRider foGRider, String fsBranchCD, boolean fbWithParent){
