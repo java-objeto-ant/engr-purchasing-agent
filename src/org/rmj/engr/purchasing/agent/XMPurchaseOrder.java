@@ -10,9 +10,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JsonDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.view.JasperViewer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -439,7 +442,7 @@ public class XMPurchaseOrder implements XMRecord{
             return null;
     }
     
-    public boolean printRecord(){
+    public boolean printRecord(boolean fbExport){
         if (pnEditMode != EditMode.READY || poData == null){
             psErrMesg = "Unable to print transaction.";
             return false;
@@ -449,7 +452,7 @@ public class XMPurchaseOrder implements XMRecord{
         Map<String, Object> params = new HashMap<>();
         params.put("sCompnyNm", "Guanzon Group");
         params.put("sBranchNm", poGRider.getBranchName());
-        params.put("sAddressx", poGRider.getAddress() + ", " + poGRider.getTownName() + " " +poGRider.getProvince());
+        params.put("sAddressx", poGRider.getAddress() + ", " + poGRider.getTownName() + " " + poGRider.getProvince());
         params.put("sTransNox", poData.getTransNox());
         params.put("sReferNox", poData.getReferNo());
         params.put("dTransact", SQLUtil.dateFormat(poData.getDateTransact(), SQLUtil.FORMAT_LONG_DATE));
@@ -543,11 +546,32 @@ public class XMPurchaseOrder implements XMRecord{
             
             jrjson = new JsonDataSource(stream);
             
-            JasperPrint jrprint = JasperFillManager.fillReport(poGRider.getReportPath() + 
-                                                                "PurchaseOrder.jasper", params, jrjson);
+            if (!fbExport){
+                JasperPrint jrprint;
+                
+                if (poData.getTranStat().equals("1"))
+                    jrprint = JasperFillManager.fillReport(poGRider.getReportPath() + "PurchaseOrder.jasper", params, jrjson);
+                else
+                    jrprint = JasperFillManager.fillReport(poGRider.getReportPath() + "POApproval.jasper", params, jrjson);
         
-            JasperViewer jv = new JasperViewer(jrprint, false);     
-            jv.setVisible(true);
+                JasperViewer jv = new JasperViewer(jrprint, false);     
+                jv.setVisible(true);
+            } else {
+                String printFileName;
+                
+                if (poData.getTranStat().equals("1"))
+                    printFileName = JasperFillManager.fillReportToFile(poGRider.getReportPath() + "PurchaseOrder.jasper", params, jrjson);
+                else
+                    printFileName = JasperFillManager.fillReportToFile(poGRider.getReportPath() + "POApproval.jasper", params, jrjson);
+                
+                if (printFileName != null){
+                    JasperExportManager.exportReportToPdfFile(printFileName, System.getProperty("sys.default.path.temp") + "/" + poData.getTransNox() + ".pdf");
+                    return true;
+                } else {
+                    System.err.println("Report data is null. Unable to export report.");
+                    return false;
+                }
+            }
         } catch (JRException | UnsupportedEncodingException ex) {
             Logger.getLogger(XMPOReceiving.class.getName()).log(Level.SEVERE, null, ex);
             return false;

@@ -13,5 +13,9 @@
         <group name="POS"/>
         <group/>
         <group name="Engineering Inventory Management System"/>
+        <group name="kumander">
+            <file>file:/D:/Guanzon/GMC%20SEG%20Folder%20-%20Java/engr-purchasing-agent/src/org/rmj/engr/purchasing/agent/XMPurchaseOrder.java</file>
+        </group>
+        <group name="integsys-engr"/>
     </open-files>
 </project-private>
