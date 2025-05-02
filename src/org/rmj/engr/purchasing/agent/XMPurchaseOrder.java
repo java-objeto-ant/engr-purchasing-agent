@@ -663,7 +663,8 @@ public class XMPurchaseOrder implements XMRecord{
                             " LEFT JOIN Inv_Type c" + 
                                 " ON a.sInvTypCd = c.sInvTypCd" + 
                         ", Client_Master d" + 
-                " WHERE a.sSupplier = d.sClientID", lsCondition);
+                " WHERE a.sSupplier = d.sClientID" +
+                    " AND LEFT(a.sTransNox,4) = '" + poGRider.getBranchCode() + "'", lsCondition);
     }
     
     private String getSQ_Stocks(){
