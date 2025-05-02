@@ -29,6 +29,7 @@ import org.rmj.appdriver.constants.RecordStatus;
 import org.rmj.engr.client.base.XMClient;
 import org.rmj.engr.inventory.base.Inventory;
 import org.rmj.engr.parameter.agent.XMBranch;
+import org.rmj.engr.parameter.agent.XMCompany;
 import org.rmj.engr.parameter.agent.XMInventoryType;
 import org.rmj.engr.parameter.agent.XMSupplier;
 import org.rmj.engr.parameter.agent.XMTerm;
@@ -265,6 +266,14 @@ public class XMPurchaseOrder implements XMRecord{
                     return true;
                 }
                 break;
+           case 4: //sCompnyID
+                XMCompany loComp = new XMCompany(poGRider, psBranchCd, true);
+                if (loComp.browseRecord(fsValue, fbByCode)){
+                    setMaster(fnCol, loComp.getMaster("sCompnyID"));
+                    MasterRetreived(fnCol);
+                    return true;
+                }
+                break;
             case 5: //sDestinat
                 XMBranch loDest = new XMBranch(poGRider, psBranchCd, true);
                 if (loDest.browseRecord(fsValue, fbByCode)){
@@ -381,6 +390,7 @@ public class XMPurchaseOrder implements XMRecord{
                                                     lsColName, 
                                                     lsColCrit, 
                                                     fbByCode ? 3 : 1);
+        System.out.println("BROWSER HERE :: "+lsSQL);
         
         if(loJSON == null)
             return false;
@@ -399,6 +409,16 @@ public class XMPurchaseOrder implements XMRecord{
         if (fbByCode && fsValue.equals("")) return null;
         
         XMTerm instance  = new XMTerm(poGRider, psBranchCd, true);
+        if (instance.browseRecord(fsValue, fbByCode))
+            return instance;
+        else
+            return null;
+    }
+    
+    public XMCompany GetCompany(String fsValue, boolean fbByCode){
+        if (fbByCode && fsValue.equals("")) return null;
+        
+        XMCompany instance  = new XMCompany(poGRider, psBranchCd, true);
         if (instance.browseRecord(fsValue, fbByCode))
             return instance;
         else
@@ -450,13 +470,39 @@ public class XMPurchaseOrder implements XMRecord{
         
         //Create the parameter
         Map<String, Object> params = new HashMap<>();
-        params.put("sCompnyNm", "Guanzon Group");
+        XMCompany loCompany = new XMCompany(poGRider, psBranchCd, true);
+        
+        JSONObject loJSON = loCompany.searchCompany(poData.getCompanyID(), true);
+        
+        if (loJSON == null) 
+            params.put("sCompnyNm", "GUANZON GROUP");
+        else
+            params.put("sCompnyNm", (String) loJSON.get("sCompnyNm"));
+        
+        // luke 3/11/2025
+        // adding small block of code to change printout userID to user name
+        String lsSQL01 = "SELECT b.sClientNm " +
+               "FROM xxxSysUser a " +
+               "LEFT JOIN Client_Master b ON a.sEmployNo = b.sClientID " +
+               "WHERE a.sUserIDxx = " + SQLUtil.toSQL(poGRider.getUserID()) + ";";
+
+        String lsPrintedBy = "UNKNOWN";
+        
+        try (ResultSet loRS = poGRider.executeQuery(lsSQL01)) {
+            if (loRS.next()) {
+                lsPrintedBy = loRS.getString("sClientNm"); 
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(); // Idk what I can put here
+        }
+        // luke 3/11/2025 - end of edit
+        
         params.put("sBranchNm", poGRider.getBranchName());
         params.put("sAddressx", poGRider.getAddress() + ", " + poGRider.getTownName() + " " + poGRider.getProvince());
         params.put("sTransNox", poData.getTransNox());
         params.put("sReferNox", poData.getReferNo());
         params.put("dTransact", SQLUtil.dateFormat(poData.getDateTransact(), SQLUtil.FORMAT_LONG_DATE));
-        params.put("sPrintdBy", poGRider.getUserID());
+        params.put("sPrintdBy", lsPrintedBy);
         
         //mac 2021.01.12
         //  insert name of approvee and reference no
@@ -501,7 +547,7 @@ public class XMPurchaseOrder implements XMRecord{
         
         XMProject loProject = new XMProject(poGRider, psBranchCd, true);
         
-        JSONObject loJSON = loProject.searchProject(poData.getBranchCd(), true);
+        loJSON = loProject.searchProject(poData.getBranchCd(), true);
         
         if (loJSON == null) 
             params.put("xBranchNm", "NOT SPECIFIED");
