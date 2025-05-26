@@ -29,6 +29,7 @@ import org.rmj.appdriver.constants.RecordStatus;
 import org.rmj.engr.client.base.XMClient;
 import org.rmj.engr.inventory.base.Inventory;
 import org.rmj.engr.parameter.agent.XMBranch;
+import org.rmj.engr.parameter.agent.XMCompany;
 import org.rmj.engr.parameter.agent.XMInventoryType;
 import org.rmj.engr.parameter.agent.XMSupplier;
 import org.rmj.engr.parameter.agent.XMTerm;
@@ -265,6 +266,14 @@ public class XMPurchaseOrder implements XMRecord{
                     return true;
                 }
                 break;
+           case 4: //sCompnyID
+                XMCompany loComp = new XMCompany(poGRider, psBranchCd, true);
+                if (loComp.browseRecord(fsValue, fbByCode)){
+                    setMaster(fnCol, loComp.getMaster("sCompnyID"));
+                    MasterRetreived(fnCol);
+                    return true;
+                }
+                break;
             case 5: //sDestinat
                 XMBranch loDest = new XMBranch(poGRider, psBranchCd, true);
                 if (loDest.browseRecord(fsValue, fbByCode)){
@@ -405,6 +414,16 @@ public class XMPurchaseOrder implements XMRecord{
             return null;
     }
     
+    public XMCompany GetCompany(String fsValue, boolean fbByCode){
+        if (fbByCode && fsValue.equals("")) return null;
+        
+        XMCompany instance  = new XMCompany(poGRider, psBranchCd, true);
+        if (instance.browseRecord(fsValue, fbByCode))
+            return instance;
+        else
+            return null;
+    }
+    
     public XMBranch GetBranch(String fsValue, boolean fbByCode){
         if (fbByCode && fsValue.equals("")) return null;
         
@@ -450,7 +469,15 @@ public class XMPurchaseOrder implements XMRecord{
         
         //Create the parameter
         Map<String, Object> params = new HashMap<>();
-        params.put("sCompnyNm", "Guanzon Group");
+        XMCompany loCompany = new XMCompany(poGRider, psBranchCd, true);
+        
+        JSONObject loJSON = loCompany.searchCompany(poData.getCompanyID(), true);
+        
+        if (loJSON == null) 
+            params.put("sCompnyNm", "GUANZON GROUP");
+        else
+            params.put("sCompnyNm", (String) loJSON.get("sCompnyNm"));
+        
         params.put("sBranchNm", poGRider.getBranchName());
         params.put("sAddressx", poGRider.getAddress() + ", " + poGRider.getTownName() + " " + poGRider.getProvince());
         params.put("sTransNox", poData.getTransNox());
@@ -501,7 +528,7 @@ public class XMPurchaseOrder implements XMRecord{
         
         XMProject loProject = new XMProject(poGRider, psBranchCd, true);
         
-        JSONObject loJSON = loProject.searchProject(poData.getBranchCd(), true);
+        loJSON = loProject.searchProject(poData.getBranchCd(), true);
         
         if (loJSON == null) 
             params.put("xBranchNm", "NOT SPECIFIED");
@@ -617,7 +644,8 @@ public class XMPurchaseOrder implements XMRecord{
                             " LEFT JOIN Inv_Type c" + 
                                 " ON a.sInvTypCd = c.sInvTypCd" + 
                         ", Client_Master d" + 
-                " WHERE a.sSupplier = d.sClientID", lsCondition);
+                " WHERE a.sSupplier = d.sClientID" +
+                        " AND LEFT(a.sTransNox, 4) LIKE " + SQLUtil.toSQL(psBranchCd + "%"), lsCondition);
     }
     
     private String getSQ_Stocks(){
